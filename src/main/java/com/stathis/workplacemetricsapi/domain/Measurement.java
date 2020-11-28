@@ -1,0 +1,38 @@
+package com.stathis.workplacemetricsapi.domain;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
+@Table(name = "measurements")
+public class Measurement extends BaseEntity {
+
+    @Column(name = "value")
+    private Double value;
+
+    @Column(name = "time_stamp")
+    private LocalDateTime timeStamp;
+
+    @ManyToOne
+    @JoinColumn(name = "metric_id")
+    private Metric metric;
+
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
+}
