@@ -19,5 +19,5 @@ public abstract class CreationBaseEntity extends BaseEntity {
 
     @CreationTimestamp
     @Column(name = "created")
-    protected Timestamp createdTimeStamp;
+    protected Timestamp createdTimestamp;
 }

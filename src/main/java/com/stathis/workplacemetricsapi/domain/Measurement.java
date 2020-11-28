@@ -11,7 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -20,13 +20,13 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "measurements")
-public class Measurement extends BaseEntity {
+public class Measurement extends CreationBaseEntity {
 
     @Column(name = "value")
     private Double value;
 
-    @Column(name = "time_stamp")
-    private LocalDateTime timeStamp;
+    @Column(name = "measurement_timestamp")
+    private Timestamp measurementTimestamp;
 
     @ManyToOne
     @JoinColumn(name = "metric_id")

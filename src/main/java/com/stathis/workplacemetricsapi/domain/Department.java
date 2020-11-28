@@ -21,7 +21,7 @@ import java.util.Set;
 @Builder
 @Entity
 @Table(name = "departments")
-public class Department extends BaseEntity {
+public class Department extends UpdateBaseEntity {
 
     @Column(name = "name")
     private String name;

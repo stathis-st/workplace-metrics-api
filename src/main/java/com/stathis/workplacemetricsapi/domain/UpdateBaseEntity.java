@@ -15,9 +15,9 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @MappedSuperclass
-public abstract class UpdateBaseEntity extends BaseEntity {
+public abstract class UpdateBaseEntity extends CreationBaseEntity {
 
     @UpdateTimestamp
     @Column(name = "updated")
-    protected Timestamp updatedTimeStamp;
+    protected Timestamp updatedTimestamp;
 }

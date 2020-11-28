@@ -21,7 +21,7 @@ import java.util.Set;
 @Builder
 @Entity
 @Table(name = "metrics")
-public class Metric extends BaseEntity {
+public class Metric extends UpdateBaseEntity {
 
     @Column(name = "type", unique = true)
     private String type;
