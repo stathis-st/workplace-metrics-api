@@ -1,12 +1,11 @@
 package com.stathis.workplacemetricsapi.util;
 
 import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
 import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-@Converter(autoApply = true)
+//@Converter(autoApply = true)
 public class ZonedDateTimeAttributeConverter implements AttributeConverter<ZonedDateTime, Timestamp> {
 
     static ZoneId utcZoneId = ZoneId.of("UTC");
