@@ -29,8 +29,8 @@ public class Metric extends UpdateBaseEntity {
     private String type;
 
     @NotNull
-    @Column(name = "unit_of_measurement", unique = true)
-    private String unitOfMeasurement;
+    @Column(name = "measurement_unit", unique = true)
+    private String measurementUnit;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "metric")
     private Set<Measurement> measurements = new HashSet<>();
