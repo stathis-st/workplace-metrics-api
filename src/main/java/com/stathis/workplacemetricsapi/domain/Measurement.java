@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -29,7 +29,7 @@ public class Measurement extends CreationBaseEntity {
 
     @NotNull
     @Column(name = "measurement_timestamp")
-    private Timestamp measurementTimestamp;
+    private ZonedDateTime measurementTimestamp;
 
     @NotNull
     @ManyToOne
