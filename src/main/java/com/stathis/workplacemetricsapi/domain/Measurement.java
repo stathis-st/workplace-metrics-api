@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -23,21 +22,17 @@ import java.time.ZonedDateTime;
 @Table(name = "measurements")
 public class Measurement extends CreationBaseEntity {
 
-    @NotNull
-    @Column(name = "value")
+    @Column(name = "value", nullable = false)
     private Double value;
 
-    @NotNull
-    @Column(name = "measurement_timestamp")
+    @Column(name = "measurement_timestamp", nullable = false)
     private ZonedDateTime measurementTimestamp;
 
-    @NotNull
     @ManyToOne
-    @JoinColumn(name = "metric_id")
+    @JoinColumn(name = "metric_id", nullable = false)
     private Metric metric;
 
-    @NotNull
     @ManyToOne
-    @JoinColumn(name = "department_id")
+    @JoinColumn(name = "department_id", nullable = false)
     private Department department;
 }

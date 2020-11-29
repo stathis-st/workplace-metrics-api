@@ -8,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -18,8 +17,7 @@ import java.time.ZonedDateTime;
 @MappedSuperclass
 public abstract class CreationBaseEntity extends BaseEntity {
 
-    @NotNull
     @CreationTimestamp
-    @Column(name = "created")
+    @Column(name = "created", nullable = false)
     protected ZonedDateTime createdTimestamp;
 }
