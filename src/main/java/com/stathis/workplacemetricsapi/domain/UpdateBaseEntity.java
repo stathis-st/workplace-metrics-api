@@ -1,5 +1,6 @@
 package com.stathis.workplacemetricsapi.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,6 @@ public abstract class UpdateBaseEntity extends CreationBaseEntity {
 
     @UpdateTimestamp
     @Column(name = "updated", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected ZonedDateTime updatedTimestamp;
 }
