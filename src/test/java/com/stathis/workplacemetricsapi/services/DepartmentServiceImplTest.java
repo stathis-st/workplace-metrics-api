@@ -185,4 +185,6 @@ class DepartmentServiceImplTest {
         assertNotNull(exception);
         assertEquals(expectedMessage, exception.getMessage());
     }
+
+    //TODO refactor department objects for testing
 }
