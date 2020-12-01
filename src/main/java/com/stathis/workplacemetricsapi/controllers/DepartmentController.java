@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/departments")
+@RequestMapping(DepartmentController.BASE_URL)
 @AllArgsConstructor
 public class DepartmentController {
+
+    public static final String BASE_URL = "/api/departments";
 
     private final DepartmentService departmentService;
 
