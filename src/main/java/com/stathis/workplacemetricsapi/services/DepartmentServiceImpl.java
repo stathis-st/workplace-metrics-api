@@ -4,12 +4,13 @@ import com.stathis.workplacemetricsapi.domain.Department;
 import com.stathis.workplacemetricsapi.exception.ResourceNotDeletedException;
 import com.stathis.workplacemetricsapi.exception.ResourceNotFoundException;
 import com.stathis.workplacemetricsapi.exception.ResourceNotUpdatedException;
+import com.stathis.workplacemetricsapi.model.ResponseEntityWrapper;
 import com.stathis.workplacemetricsapi.repositories.DepartmentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 import static com.stathis.workplacemetricsapi.exception.ResourceNotDeletedException.RESOURCE_COULD_NOT_BE_DELETED;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundException.RESOURCE_NOT_FOUND_FOR_ID;
@@ -22,8 +23,12 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentRepository departmentRepository;
 
     @Override
-    public List<Department> getAllDepartments() {
-        return departmentRepository.findAll();
+    public ResponseEntityWrapper<Department> getAllDepartments(Pageable pageable) {
+        Page<Department> departmentPage = departmentRepository.findAll(pageable);
+        return new ResponseEntityWrapper<>(departmentPage.getContent(),
+                departmentPage.getNumber(),
+                departmentPage.getTotalElements(),
+                departmentPage.getTotalPages());
     }
 
     @Override

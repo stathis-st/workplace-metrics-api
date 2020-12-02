@@ -10,8 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,26 +47,30 @@ class DepartmentServiceImplTest {
 
     @Test
     void getAllDepartments() {
-        //given
-        Department alpha = Department.builder().build();
-        alpha.setId(1L);
-        alpha.setName("alpha");
+        List<Department> departmentList = new ArrayList<>();
 
-        Department beta = Department.builder().build();
-        beta.setId(2L);
-        beta.setName("beta");
+        char name = 'A';
+        for (int i = 0; i < 7; i++) {
+            departmentList.add(Department.builder().name(Character.toString(name)).build());
+            name++;
+        }
+        int requestedPage = 1;
+        int requestedSize = 7;
+        int total = 62;
+        Page<Department> departmentPage = new PageImpl<>(departmentList, PageRequest.of(requestedPage, requestedSize), total);
 
-        when(departmentRepository.findAll()).thenReturn(Arrays.asList(alpha, beta));
+        when(departmentRepository.findAll(any(Pageable.class))).thenReturn(departmentPage);
 
-        //when
-        List<Department> departments = departmentService.getAllDepartments();
-
-        //then
-        assertEquals(2, departments.size());
-        assertEquals(1L, departments.get(0).getId());
-        assertEquals(2L, departments.get(1).getId());
-        assertEquals("alpha", departments.get(0).getName());
-        assertEquals("beta", departments.get(1).getName());
+        int expectedTotalPages;
+        if (total % requestedSize == 0) {
+            expectedTotalPages = total / requestedSize;
+        } else {
+            expectedTotalPages = (total / requestedSize) + 1;
+        }
+        assertEquals(expectedTotalPages, departmentPage.getTotalPages());
+        assertEquals(requestedPage, departmentPage.getNumber());
+        assertEquals(requestedSize, departmentPage.getContent().size());
+        assertEquals("B", departmentPage.getContent().get(1).getName());
     }
 
     @Test

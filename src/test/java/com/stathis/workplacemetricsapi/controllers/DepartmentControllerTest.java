@@ -4,17 +4,20 @@ import com.stathis.workplacemetricsapi.domain.Department;
 import com.stathis.workplacemetricsapi.exception.ResourceNotDeletedException;
 import com.stathis.workplacemetricsapi.exception.ResourceNotFoundException;
 import com.stathis.workplacemetricsapi.exception.ResourceNotUpdatedException;
+import com.stathis.workplacemetricsapi.model.ResponseEntityWrapper;
 import com.stathis.workplacemetricsapi.services.DepartmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.stathis.workplacemetricsapi.exception.ResourceNotDeletedException.RESOURCE_COULD_NOT_BE_DELETED;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundException.RESOURCE_NOT_FOUND_FOR_ID;
@@ -54,25 +57,32 @@ class DepartmentControllerTest extends AbstractRestControllerTest {
 
     @Test
     void getAllDepartments() throws Exception {
+        List<Department> departmentList = new ArrayList<>();
 
-        Department alpha = Department.builder().build();
-        alpha.setId(1L);
-        alpha.setName("alpha");
+        char name = 'A';
+        for (int i = 0; i < 7; i++) {
+            departmentList.add(Department.builder().name(Character.toString(name)).build());
+            name++;
+        }
 
-        Department beta = Department.builder().build();
-        beta.setId(2L);
-        beta.setName("beta");
+        int currentPage = 1;
+        int totalItems = 62;
+        int totalPages = 9;
+        ResponseEntityWrapper<Department> departmentResponseEntityWrapper =
+                new ResponseEntityWrapper<>(departmentList, currentPage, (long) totalItems, totalPages);
 
-        when(departmentService.getAllDepartments()).thenReturn(Arrays.asList(alpha, beta));
+        when(departmentService.getAllDepartments(any(Pageable.class))).thenReturn(departmentResponseEntityWrapper);
 
         mockMvc.perform(get(DepartmentController.BASE_URL)
+                .param("name", "1")
+                .param("size", "7")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id", equalTo(1)))
-                .andExpect(jsonPath("$[1].id", equalTo(2)))
-                .andExpect(jsonPath("$[0].name", equalTo("alpha")))
-                .andExpect(jsonPath("$[1].name", equalTo("beta")));
+                .andExpect(jsonPath("$.entityList", hasSize(7)))
+                .andExpect(jsonPath("$.currentPage", equalTo(currentPage)))
+                .andExpect(jsonPath("$.totalItems", equalTo(totalItems)))
+                .andExpect(jsonPath("$.totalPages", equalTo(totalPages)))
+                .andExpect(jsonPath("$.entityList[1].name", equalTo("B")));
     }
 
     @Test

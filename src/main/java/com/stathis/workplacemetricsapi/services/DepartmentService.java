@@ -1,12 +1,12 @@
 package com.stathis.workplacemetricsapi.services;
 
 import com.stathis.workplacemetricsapi.domain.Department;
-
-import java.util.List;
+import com.stathis.workplacemetricsapi.model.ResponseEntityWrapper;
+import org.springframework.data.domain.Pageable;
 
 public interface DepartmentService {
 
-    List<Department> getAllDepartments();
+    ResponseEntityWrapper<Department> getAllDepartments(Pageable pageable);
 
     Department getDepartmentById(Long id);
 
