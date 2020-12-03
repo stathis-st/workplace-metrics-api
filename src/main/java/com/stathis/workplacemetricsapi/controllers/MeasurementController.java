@@ -41,4 +41,12 @@ public class MeasurementController {
     public Measurement saveMeasurement(@RequestBody MeasurementDTO measurementDTO) {
         return measurementService.saveMeasurement(measurementDTO);
     }
+
+    @GetMapping("/daily")
+    public ResponseEntityWrapper<Measurement> getMeasurementsByMetricIdAndDepartmentId(@RequestParam(defaultValue = "0") Integer page,
+                                                                                       @RequestParam(defaultValue = "10") Integer size,
+                                                                                       @RequestParam(required = false) Long metricId,
+                                                                                       @RequestParam(required = false) Long departmentId) {
+        return measurementService.getDailyMeasurements(PageRequest.of(page, size), metricId, departmentId);
+    }
 }

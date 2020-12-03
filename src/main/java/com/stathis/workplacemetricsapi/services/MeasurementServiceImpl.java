@@ -14,6 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+
 import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundException.RESOURCE_NOT_FOUND_WITH_ID;
 
 @Service
@@ -61,5 +64,28 @@ public class MeasurementServiceImpl implements MeasurementService {
                 .build();
 
         return measurementRepository.save(measurement);
+    }
+
+    @Override
+    public ResponseEntityWrapper<Measurement> getDailyMeasurements(Pageable pageable,
+                                                                   Long metricId,
+                                                                   Long departmentId) {
+        Metric fetchedMetric = metricRepository.findById(metricId)
+                .orElseThrow(() -> new ResourceNotFoundException("No records found"));
+
+        Department fetchedDepartment = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("No records found"));
+
+        Page<Measurement> measurementPage =
+                measurementRepository.findMeasurementsByMetricAndDepartmentAndMeasurementTimestampBetween(pageable,
+                        fetchedMetric,
+                        fetchedDepartment,
+                        ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS),
+                        ZonedDateTime.now());
+
+        return new ResponseEntityWrapper<>(measurementPage.getContent(),
+                measurementPage.getNumber(),
+                measurementPage.getTotalElements(),
+                measurementPage.getTotalPages());
     }
 }

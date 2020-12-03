@@ -12,4 +12,8 @@ public interface MeasurementService {
     Measurement getMeasurementById(Long id);
 
     Measurement saveMeasurement(MeasurementDTO measurementDTO);
+
+    ResponseEntityWrapper<Measurement> getDailyMeasurements(Pageable pageable,
+                                                            Long metricId,
+                                                            Long departmentId);
 }
