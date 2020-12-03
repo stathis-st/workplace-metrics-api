@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import static com.stathis.workplacemetricsapi.exception.ResourceConstraintViolationException.SAVE_RESOURCE_CONSTRAINT_VIOLATION;
 import static com.stathis.workplacemetricsapi.exception.ResourceConstraintViolationException.UPDATE_RESOURCE_CONSTRAINT_VIOLATION;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotDeletedException.RESOURCE_COULD_NOT_BE_DELETED;
-import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundException.RESOURCE_NOT_FOUND_FOR_ID;
+import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundException.RESOURCE_NOT_FOUND_WITH_ID;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotUpdatedException.RESOURCE_COULD_NOT_BE_UPDATED;
 
 @Service
@@ -38,7 +38,7 @@ public class MetricServiceImpl implements MetricService {
     @Override
     public Metric getMetricById(Long id) {
         return metricRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND_FOR_ID + id));
+                .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NOT_FOUND_WITH_ID + id));
     }
 
     @Override
