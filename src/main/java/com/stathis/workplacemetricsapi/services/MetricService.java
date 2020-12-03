@@ -2,8 +2,7 @@ package com.stathis.workplacemetricsapi.services;
 
 import com.stathis.workplacemetricsapi.domain.Metric;
 import com.stathis.workplacemetricsapi.model.ResponseEntityWrapper;
-
-import java.awt.print.Pageable;
+import org.springframework.data.domain.Pageable;
 
 public interface MetricService {
 
