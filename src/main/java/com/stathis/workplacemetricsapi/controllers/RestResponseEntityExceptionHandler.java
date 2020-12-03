@@ -1,5 +1,6 @@
 package com.stathis.workplacemetricsapi.controllers;
 
+import com.stathis.workplacemetricsapi.exception.ResourceConstraintViolationException;
 import com.stathis.workplacemetricsapi.exception.ResourceNotDeletedException;
 import com.stathis.workplacemetricsapi.exception.ResourceNotFoundException;
 import com.stathis.workplacemetricsapi.exception.ResourceNotUpdatedException;
@@ -19,5 +20,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             ResourceNotUpdatedException.class})
     public ResponseEntity<Object> handleNotFoundException(Exception exception, WebRequest request) {
         return new ResponseEntity<>(exception.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ResourceConstraintViolationException.class)
+    public ResponseEntity<Object> handleBadRequest(Exception exception, WebRequest request) {
+        return new ResponseEntity<>(exception.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 }
