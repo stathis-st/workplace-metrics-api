@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.stathis.workplacemetricsapi.domain.BaseEntity.ID_ONE;
+import static com.stathis.workplacemetricsapi.domain.Department.ALPHA;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotDeletedException.RESOURCE_COULD_NOT_BE_DELETED;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundException.RESOURCE_NOT_FOUND_FOR_ID;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotUpdatedException.RESOURCE_COULD_NOT_BE_UPDATED;
@@ -39,10 +41,20 @@ class DepartmentServiceImplTest {
 
     DepartmentService departmentService;
 
+    Department departmentAlpha;
+    Department departmentForSave;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         departmentService = new DepartmentServiceImpl(departmentRepository);
+
+        departmentAlpha = Department.builder().build();
+        departmentAlpha.setId(ID_ONE);
+        departmentAlpha.setName(ALPHA);
+
+        departmentForSave = Department.builder().build();
+        departmentForSave.setName(ALPHA);
     }
 
     @Test
@@ -75,33 +87,24 @@ class DepartmentServiceImplTest {
 
     @Test
     void getDepartmentById() {
-        //given
-        Department alpha = Department.builder().build();
-        alpha.setId(1L);
-        alpha.setName("alpha");
 
-        when(departmentRepository.findById(anyLong())).thenReturn(Optional.ofNullable(alpha));
+        when(departmentRepository.findById(anyLong())).thenReturn(Optional.ofNullable(departmentAlpha));
 
-        //when
-        Department department = departmentService.getDepartmentById(1L);
+        Department fetchedDepartment = departmentService.getDepartmentById(ID_ONE);
 
-        //then
-        assertEquals(1L, department.getId());
-        assertEquals("alpha", department.getName());
+        assertEquals(ID_ONE, fetchedDepartment.getId());
+        assertEquals(ALPHA, fetchedDepartment.getName());
     }
 
     @Test
     void getDepartmentByIdNotFound() {
-        //given
+
         when(departmentRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        //when
-        Long id = 1L;
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> departmentService.getDepartmentById(id));
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> departmentService.getDepartmentById(ID_ONE));
 
-        String expectedMessage = RESOURCE_NOT_FOUND_FOR_ID + id;
+        String expectedMessage = RESOURCE_NOT_FOUND_FOR_ID + ID_ONE;
 
-        //then
         assertNotNull(exception);
         assertEquals(expectedMessage, exception.getMessage());
     }
@@ -109,62 +112,45 @@ class DepartmentServiceImplTest {
     @Test
     void saveDepartment() {
 
-        //given
-        Department department = Department.builder().build();
-        department.setName("alpha");
+        when(departmentRepository.save(any(Department.class))).thenReturn(departmentForSave);
 
-        when(departmentRepository.save(any(Department.class))).thenReturn(department);
+        Department savedDepartment = departmentService.saveDepartment(departmentForSave);
 
-        //when
-        Department savedDepartment = departmentService.saveDepartment(department);
-
-        assertEquals(department.getName(), savedDepartment.getName());
+        assertEquals(departmentForSave.getName(), savedDepartment.getName());
     }
 
     @Test
     void updateDepartment() {
-        //given
-        Department alpha = Department.builder().build();
-        alpha.setId(1L);
-        alpha.setName("alpha");
 
-        when(departmentRepository.findById(anyLong())).thenReturn(Optional.ofNullable(alpha));
+        when(departmentRepository.findById(anyLong())).thenReturn(Optional.ofNullable(departmentAlpha));
 
-        //when
-        Department fetchedDepartment = departmentService.getDepartmentById(1L);
+        Department fetchedDepartment = departmentService.getDepartmentById(ID_ONE);
 
-        //then
-        assertEquals(1L, fetchedDepartment.getId());
-        assertEquals("alpha", fetchedDepartment.getName());
+        assertEquals(ID_ONE, fetchedDepartment.getId());
+        assertEquals(ALPHA, fetchedDepartment.getName());
 
 
-        //given
         fetchedDepartment.setName("alpha_department");
 
         when(departmentRepository.save(any(Department.class))).thenReturn(fetchedDepartment);
 
-        //when
         Department updatedDepartment = departmentService.saveDepartment(fetchedDepartment);
 
-        //then
         assertEquals(fetchedDepartment.getName(), updatedDepartment.getName());
-
     }
 
     @Test
     void updateDepartmentResourceNotFound() {
-        //given
+
         when(departmentRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Long id = 1L;
         Department departmentForUpdate = Department.builder().name("updated_name").build();
 
         ResourceNotUpdatedException exception = assertThrows(ResourceNotUpdatedException.class,
-                () -> departmentService.updateDepartment(id, departmentForUpdate));
+                () -> departmentService.updateDepartment(ID_ONE, departmentForUpdate));
 
-        String expectedMessage = RESOURCE_COULD_NOT_BE_UPDATED + RESOURCE_NOT_FOUND_FOR_ID + id;
+        String expectedMessage = RESOURCE_COULD_NOT_BE_UPDATED + RESOURCE_NOT_FOUND_FOR_ID + ID_ONE;
 
-        //then
         assertNotNull(exception);
         assertEquals(expectedMessage, exception.getMessage());
     }
@@ -172,9 +158,7 @@ class DepartmentServiceImplTest {
     @Test
     void deleteDepartmentById() {
 
-        Long id = 1L;
-
-        departmentRepository.deleteById(id);
+        departmentRepository.deleteById(ID_ONE);
 
         verify(departmentRepository, times(1)).deleteById(anyLong());
     }
@@ -184,15 +168,11 @@ class DepartmentServiceImplTest {
 
         doThrow(EmptyResultDataAccessException.class).when(departmentRepository).deleteById(anyLong());
 
-        Long id = 1L;
-        ResourceNotDeletedException exception = assertThrows(ResourceNotDeletedException.class, () -> departmentService.deleteDepartmentById(id));
+        ResourceNotDeletedException exception = assertThrows(ResourceNotDeletedException.class, () -> departmentService.deleteDepartmentById(ID_ONE));
 
-        String expectedMessage = RESOURCE_COULD_NOT_BE_DELETED + id;
+        String expectedMessage = RESOURCE_COULD_NOT_BE_DELETED + ID_ONE;
 
-        //then
         assertNotNull(exception);
         assertEquals(expectedMessage, exception.getMessage());
     }
-
-    //TODO refactor department objects for testing
 }
