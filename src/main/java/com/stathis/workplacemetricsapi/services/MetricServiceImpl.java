@@ -1,17 +1,21 @@
 package com.stathis.workplacemetricsapi.services;
 
 import com.stathis.workplacemetricsapi.domain.Metric;
+import com.stathis.workplacemetricsapi.exception.ResourceConstraintViolationException;
 import com.stathis.workplacemetricsapi.exception.ResourceNotDeletedException;
 import com.stathis.workplacemetricsapi.exception.ResourceNotFoundException;
 import com.stathis.workplacemetricsapi.exception.ResourceNotUpdatedException;
 import com.stathis.workplacemetricsapi.model.ResponseEntityWrapper;
 import com.stathis.workplacemetricsapi.repositories.MetricRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import static com.stathis.workplacemetricsapi.exception.ResourceConstraintViolationException.SAVE_RESOURCE_CONSTRAINT_VIOLATION;
+import static com.stathis.workplacemetricsapi.exception.ResourceConstraintViolationException.UPDATE_RESOURCE_CONSTRAINT_VIOLATION;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotDeletedException.RESOURCE_COULD_NOT_BE_DELETED;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundException.RESOURCE_NOT_FOUND_FOR_ID;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotUpdatedException.RESOURCE_COULD_NOT_BE_UPDATED;
@@ -39,7 +43,11 @@ public class MetricServiceImpl implements MetricService {
 
     @Override
     public Metric saveMetric(Metric metric) {
-        return metricRepository.save(metric);
+        try {
+            return metricRepository.save(metric);
+        } catch (DataIntegrityViolationException ex) {
+            throw new ResourceConstraintViolationException(SAVE_RESOURCE_CONSTRAINT_VIOLATION);
+        }
     }
 
     @Override
@@ -52,7 +60,12 @@ public class MetricServiceImpl implements MetricService {
         }
         savedMetric.setType(metric.getType());
         savedMetric.setMeasurementUnit(metric.getMeasurementUnit());
-        return saveMetric(savedMetric);
+
+        try {
+            return saveMetric(savedMetric);
+        } catch (ResourceConstraintViolationException ex) {
+            throw new ResourceConstraintViolationException(UPDATE_RESOURCE_CONSTRAINT_VIOLATION);
+        }
     }
 
     @Override
