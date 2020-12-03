@@ -24,6 +24,8 @@ import java.util.Set;
 @Table(name = "departments")
 public class Department extends UpdateBaseEntity {
 
+    public static final String ALPHA = "Alpha";
+
     @Column(name = "name", nullable = false)
     private String name;
 

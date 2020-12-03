@@ -19,6 +19,8 @@ import java.io.Serializable;
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable {
 
+    public static final Long ID_ONE = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
