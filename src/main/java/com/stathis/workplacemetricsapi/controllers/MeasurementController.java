@@ -1,6 +1,7 @@
 package com.stathis.workplacemetricsapi.controllers;
 
 import com.stathis.workplacemetricsapi.domain.Measurement;
+import com.stathis.workplacemetricsapi.model.MeasurementDTO;
 import com.stathis.workplacemetricsapi.model.ResponseEntityWrapper;
 import com.stathis.workplacemetricsapi.services.MeasurementService;
 import lombok.AllArgsConstructor;
@@ -37,7 +38,7 @@ public class MeasurementController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Measurement saveMeasurement(@RequestBody Measurement measurement) {
-        return measurementService.saveMeasurement(measurement);
+    public Measurement saveMeasurement(@RequestBody MeasurementDTO measurementDTO) {
+        return measurementService.saveMeasurement(measurementDTO);
     }
 }

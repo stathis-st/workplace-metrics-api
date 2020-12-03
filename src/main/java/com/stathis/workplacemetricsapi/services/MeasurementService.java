@@ -1,6 +1,7 @@
 package com.stathis.workplacemetricsapi.services;
 
 import com.stathis.workplacemetricsapi.domain.Measurement;
+import com.stathis.workplacemetricsapi.model.MeasurementDTO;
 import com.stathis.workplacemetricsapi.model.ResponseEntityWrapper;
 import org.springframework.data.domain.Pageable;
 
@@ -10,5 +11,5 @@ public interface MeasurementService {
 
     Measurement getMeasurementById(Long id);
 
-    Measurement saveMeasurement(Measurement measurement);
+    Measurement saveMeasurement(MeasurementDTO measurementDTO);
 }
