@@ -1,5 +1,6 @@
 package com.stathis.workplacemetricsapi.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class Metric extends UpdateBaseEntity {
     @Column(name = "measurement_unit", unique = true, nullable = false)
     private String measurementUnit;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "metric")
     private Set<Measurement> measurements = new HashSet<>();
 }
