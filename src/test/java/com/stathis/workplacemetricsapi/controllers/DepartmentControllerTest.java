@@ -19,6 +19,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.stathis.workplacemetricsapi.domain.BaseEntity.ID_ONE;
+import static com.stathis.workplacemetricsapi.domain.Department.ALPHA;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotDeletedException.RESOURCE_COULD_NOT_BE_DELETED;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundException.RESOURCE_NOT_FOUND_FOR_ID;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotUpdatedException.RESOURCE_COULD_NOT_BE_UPDATED;
@@ -46,6 +48,9 @@ class DepartmentControllerTest extends AbstractRestControllerTest {
 
     MockMvc mockMvc;
 
+    Department departmentAlpha;
+    Department departmentForUpdate;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -53,6 +58,13 @@ class DepartmentControllerTest extends AbstractRestControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(departmentController)
                 .setControllerAdvice(new RestResponseEntityExceptionHandler())
                 .build();
+
+        departmentAlpha = Department.builder().build();
+        departmentAlpha.setId(ID_ONE);
+        departmentAlpha.setName(ALPHA);
+
+        departmentForUpdate = Department.builder().build();
+        departmentForUpdate.setName(ALPHA);
     }
 
     @Test
@@ -88,17 +100,13 @@ class DepartmentControllerTest extends AbstractRestControllerTest {
     @Test
     void getDepartmentById() throws Exception {
 
-        Department alpha = Department.builder().build();
-        alpha.setId(1L);
-        alpha.setName("alpha");
-
-        when(departmentService.getDepartmentById(anyLong())).thenReturn(alpha);
+        when(departmentService.getDepartmentById(anyLong())).thenReturn(departmentAlpha);
 
         mockMvc.perform(get(DepartmentController.BASE_URL + "/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", equalTo(1)))
-                .andExpect(jsonPath("$.name", equalTo("alpha")));
+                .andExpect(jsonPath("$.name", equalTo(ALPHA)));
     }
 
     @Test
@@ -113,24 +121,19 @@ class DepartmentControllerTest extends AbstractRestControllerTest {
 
     @Test
     void saveDepartment() throws Exception {
-        Department alpha = Department.builder().build();
-        alpha.setId(1L);
-        alpha.setName("alpha");
 
-        when(departmentService.saveDepartment(any(Department.class))).thenReturn(alpha);
+        when(departmentService.saveDepartment(any(Department.class))).thenReturn(departmentAlpha);
 
         mockMvc.perform(post(DepartmentController.BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(alpha)))
+                .content(asJsonString(departmentAlpha)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", equalTo(1)))
-                .andExpect(jsonPath("$.name", equalTo("alpha")));
+                .andExpect(jsonPath("$.name", equalTo(ALPHA)));
     }
 
     @Test
     void updateDepartment() throws Exception {
-        Department alpha = Department.builder().build();
-        alpha.setName("alpha");
 
         Department updatedDepartment = Department.builder().build();
         updatedDepartment.setId(1L);
@@ -140,7 +143,7 @@ class DepartmentControllerTest extends AbstractRestControllerTest {
 
         mockMvc.perform(put(DepartmentController.BASE_URL + "/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(alpha)))
+                .content(asJsonString(departmentForUpdate)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", equalTo(1)))
                 .andExpect(jsonPath("$.name", equalTo("alpha_department")));
@@ -148,15 +151,13 @@ class DepartmentControllerTest extends AbstractRestControllerTest {
 
     @Test
     void updateDepartmentNotFound() throws Exception {
-        Department alpha = Department.builder().build();
-        alpha.setName("alpha");
 
         when(departmentService.updateDepartment(anyLong(), any(Department.class)))
                 .thenThrow(new ResourceNotUpdatedException(RESOURCE_COULD_NOT_BE_UPDATED + RESOURCE_NOT_FOUND_FOR_ID + 555));
 
         mockMvc.perform(put(DepartmentController.BASE_URL + "/555")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(alpha)))
+                .content(asJsonString(departmentForUpdate)))
                 .andExpect(status().isNotFound());
     }
 
@@ -181,7 +182,4 @@ class DepartmentControllerTest extends AbstractRestControllerTest {
                 .andExpect(status().isNotFound());
 
     }
-
-
-    //TODO refactor department objects for testing
 }
