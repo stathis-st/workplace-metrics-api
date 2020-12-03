@@ -22,7 +22,7 @@ import java.util.List;
 import static com.stathis.workplacemetricsapi.domain.BaseEntity.ID_ONE;
 import static com.stathis.workplacemetricsapi.domain.Department.ALPHA;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotDeletedException.RESOURCE_COULD_NOT_BE_DELETED;
-import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundException.RESOURCE_NOT_FOUND_FOR_ID;
+import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundException.RESOURCE_NOT_FOUND_WITH_ID;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotUpdatedException.RESOURCE_COULD_NOT_BE_UPDATED;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -112,7 +112,7 @@ class DepartmentControllerTest extends AbstractRestControllerTest {
     @Test
     void getDepartmentByIdNotFound() throws Exception {
 
-        when(departmentService.getDepartmentById(anyLong())).thenThrow(new ResourceNotFoundException(RESOURCE_NOT_FOUND_FOR_ID + 555));
+        when(departmentService.getDepartmentById(anyLong())).thenThrow(new ResourceNotFoundException(RESOURCE_NOT_FOUND_WITH_ID + 555));
 
         mockMvc.perform(get(DepartmentController.BASE_URL + "/555")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -153,7 +153,7 @@ class DepartmentControllerTest extends AbstractRestControllerTest {
     void updateDepartmentNotFound() throws Exception {
 
         when(departmentService.updateDepartment(anyLong(), any(Department.class)))
-                .thenThrow(new ResourceNotUpdatedException(RESOURCE_COULD_NOT_BE_UPDATED + RESOURCE_NOT_FOUND_FOR_ID + 555));
+                .thenThrow(new ResourceNotUpdatedException(RESOURCE_COULD_NOT_BE_UPDATED + RESOURCE_NOT_FOUND_WITH_ID + 555));
 
         mockMvc.perform(put(DepartmentController.BASE_URL + "/555")
                 .contentType(MediaType.APPLICATION_JSON)

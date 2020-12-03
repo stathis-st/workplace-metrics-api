@@ -22,7 +22,7 @@ import java.util.Optional;
 import static com.stathis.workplacemetricsapi.domain.BaseEntity.ID_ONE;
 import static com.stathis.workplacemetricsapi.domain.Department.ALPHA;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotDeletedException.RESOURCE_COULD_NOT_BE_DELETED;
-import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundException.RESOURCE_NOT_FOUND_FOR_ID;
+import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundException.RESOURCE_NOT_FOUND_WITH_ID;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotUpdatedException.RESOURCE_COULD_NOT_BE_UPDATED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -103,7 +103,7 @@ class DepartmentServiceImplTest {
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> departmentService.getDepartmentById(ID_ONE));
 
-        String expectedMessage = RESOURCE_NOT_FOUND_FOR_ID + ID_ONE;
+        String expectedMessage = RESOURCE_NOT_FOUND_WITH_ID + ID_ONE;
 
         assertNotNull(exception);
         assertEquals(expectedMessage, exception.getMessage());
@@ -149,7 +149,7 @@ class DepartmentServiceImplTest {
         ResourceNotUpdatedException exception = assertThrows(ResourceNotUpdatedException.class,
                 () -> departmentService.updateDepartment(ID_ONE, departmentForUpdate));
 
-        String expectedMessage = RESOURCE_COULD_NOT_BE_UPDATED + RESOURCE_NOT_FOUND_FOR_ID + ID_ONE;
+        String expectedMessage = RESOURCE_COULD_NOT_BE_UPDATED + RESOURCE_NOT_FOUND_WITH_ID + ID_ONE;
 
         assertNotNull(exception);
         assertEquals(expectedMessage, exception.getMessage());
