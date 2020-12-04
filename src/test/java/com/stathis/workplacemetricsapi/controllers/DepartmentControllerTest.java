@@ -110,7 +110,7 @@ class DepartmentControllerTest extends AbstractRestControllerTest {
     }
 
     @Test
-    void getDepartmentByIdNotFound() throws Exception {
+    void getDepartmentByIdResourceNotFound() throws Exception {
 
         when(departmentService.getDepartmentById(anyLong())).thenThrow(new ResourceNotFoundException(RESOURCE_NOT_FOUND_WITH_ID + 555));
 
@@ -150,7 +150,7 @@ class DepartmentControllerTest extends AbstractRestControllerTest {
     }
 
     @Test
-    void updateDepartmentNotFound() throws Exception {
+    void updateDepartmentResourceNotFound() throws Exception {
 
         when(departmentService.updateDepartment(anyLong(), any(Department.class)))
                 .thenThrow(new ResourceNotUpdatedException(RESOURCE_COULD_NOT_BE_UPDATED + RESOURCE_NOT_FOUND_WITH_ID + 555));
@@ -172,7 +172,7 @@ class DepartmentControllerTest extends AbstractRestControllerTest {
     }
 
     @Test
-    void deleteDepartmentNotFound() throws Exception {
+    void deleteDepartmentResourceNotFound() throws Exception {
 
         doThrow(new ResourceNotDeletedException(RESOURCE_COULD_NOT_BE_DELETED + "/555"))
                 .when(departmentService).deleteDepartmentById(555L);
