@@ -4,6 +4,7 @@ import com.stathis.workplacemetricsapi.domain.Department;
 import com.stathis.workplacemetricsapi.domain.Measurement;
 import com.stathis.workplacemetricsapi.domain.Metric;
 import com.stathis.workplacemetricsapi.exception.ResourceNotFoundException;
+import com.stathis.workplacemetricsapi.model.AggregatedResult;
 import com.stathis.workplacemetricsapi.model.MeasurementDTO;
 import com.stathis.workplacemetricsapi.model.ResponseEntityWrapper;
 import com.stathis.workplacemetricsapi.repositories.DepartmentRepository;
@@ -14,8 +15,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.WeekFields;
 
 import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundException.RESOURCE_NOT_FOUND_WITH_ID;
 
@@ -87,5 +90,21 @@ public class MeasurementServiceImpl implements MeasurementService {
                 measurementPage.getNumber(),
                 measurementPage.getTotalElements(),
                 measurementPage.getTotalPages());
+    }
+
+    @Override
+    public AggregatedResult getDailyAggregatedResults(Long metricId, Long departmentId, Integer numberOfDaysBack) {
+        ZonedDateTime startOfDay = ZonedDateTime.now().minusDays(numberOfDaysBack).with(LocalTime.MIN);
+        ZonedDateTime endOfDay = ZonedDateTime.now().minusDays(numberOfDaysBack).with(LocalTime.MAX);
+
+        return measurementRepository.getAggregatedResults(metricId, departmentId, startOfDay, endOfDay);
+    }
+
+    @Override
+    public AggregatedResult getWeeklyAggregatedResults(Long metricId, Long departmentId, Integer numberOfWeeksBack) {
+        ZonedDateTime startOfWeek = ZonedDateTime.now().minusWeeks(3).with(WeekFields.ISO.getFirstDayOfWeek()).with(LocalTime.MIN);
+        ZonedDateTime endOfWeek = startOfWeek.plusDays(6).with(LocalTime.MAX);
+
+        return measurementRepository.getAggregatedResults(metricId, departmentId, startOfWeek, endOfWeek);
     }
 }
