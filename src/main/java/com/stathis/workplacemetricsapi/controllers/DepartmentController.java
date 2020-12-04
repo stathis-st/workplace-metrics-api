@@ -27,8 +27,8 @@ public class DepartmentController {
     private final DepartmentService departmentService;
 
     @GetMapping
-    public ResponseEntityWrapper<Department> getAllDepartments(@RequestParam(defaultValue = "0") Integer page,
-                                                               @RequestParam(defaultValue = "10") Integer size) {
+    public ResponseEntityWrapper<Department> getAllDepartments(@RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                               @RequestParam(name = "size", defaultValue = "10") Integer size) {
         return departmentService.getAllDepartments(PageRequest.of(page, size));
     }
 

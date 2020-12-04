@@ -30,8 +30,8 @@ public class MeasurementController {
     private final MeasurementService measurementService;
 
     @GetMapping
-    public ResponseEntityWrapper<Measurement> getAllMeasurements(@RequestParam(defaultValue = "0") Integer page,
-                                                                 @RequestParam(defaultValue = "10") Integer size) {
+    public ResponseEntityWrapper<Measurement> getAllMeasurements(@RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                                 @RequestParam(name = "size", defaultValue = "10") Integer size) {
         return measurementService.getAllMeasurements(PageRequest.of(page, size));
     }
 
@@ -47,26 +47,24 @@ public class MeasurementController {
     }
 
     @GetMapping("/daily")
-    public ResponseEntityWrapper<Measurement> getMeasurementsByMetricIdAndDepartmentId(@RequestParam(defaultValue = "0") Integer page,
-                                                                                       @RequestParam(defaultValue = "10") Integer size,
-                                                                                       @RequestParam(required = false) Long metricId,
-                                                                                       @RequestParam(required = false) Long departmentId) {
+    public ResponseEntityWrapper<Measurement> getMeasurementsByMetricIdAndDepartmentId(@RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                                                       @RequestParam(name = "size", defaultValue = "10") Integer size,
+                                                                                       @RequestParam(name = "metricId", required = false) Long metricId,
+                                                                                       @RequestParam(name = "departmentId", required = false) Long departmentId) {
         return measurementService.getDailyMeasurements(PageRequest.of(page, size), metricId, departmentId);
     }
 
     @GetMapping("/aggregated/daily")
-    public AggregatedResult getDailyAggregatedResults(@RequestParam Long metricId,
-                                                      @RequestParam Long departmentId,
+    public AggregatedResult getDailyAggregatedResults(@RequestParam("metricId") Long metricId,
+                                                      @RequestParam("departmentId") Long departmentId,
                                                       @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate requestedDate) {
         return measurementService.getDailyAggregatedResults(metricId, departmentId, requestedDate);
     }
 
     @GetMapping("/aggregated/weekly")
-    public AggregatedResult getWeeklyAggregatedResults(@RequestParam Long metricId,
-                                                       @RequestParam Long departmentId,
+    public AggregatedResult getWeeklyAggregatedResults(@RequestParam("metricId") Long metricId,
+                                                       @RequestParam("departmentId") Long departmentId,
                                                        @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate requestedDate) {
         return measurementService.getWeeklyAggregatedResults(metricId, departmentId, requestedDate);
     }
-
-    //TODO name in each @RequestParams
 }

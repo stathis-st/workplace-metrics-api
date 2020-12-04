@@ -27,8 +27,8 @@ public class MetricController {
     private final MetricService metricService;
 
     @GetMapping
-    public ResponseEntityWrapper<Metric> getAllMetrics(@RequestParam(defaultValue = "0") Integer page,
-                                                       @RequestParam(defaultValue = "10") Integer size) {
+    public ResponseEntityWrapper<Metric> getAllMetrics(@RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                       @RequestParam(name = "size", defaultValue = "10") Integer size) {
         return metricService.getAllMetrics(PageRequest.of(page, size));
     }
 
