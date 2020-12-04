@@ -16,9 +16,9 @@ public interface MeasurementService {
 
     Measurement saveMeasurement(MeasurementDTO measurementDTO);
 
-    ResponseEntityWrapper<Measurement> getDailyMeasurements(Pageable pageable,
-                                                            Long metricId,
-                                                            Long departmentId);
+    ResponseEntityWrapper<Measurement> getDailyMeasurementsByMetricAndDepartment(Pageable pageable,
+                                                                                 Long metricId,
+                                                                                 Long departmentId);
 
     AggregatedResult getDailyAggregatedResults(Long metricId, Long departmentId, LocalDate requestedDate);
 

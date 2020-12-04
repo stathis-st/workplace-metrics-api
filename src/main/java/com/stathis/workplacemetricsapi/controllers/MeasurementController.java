@@ -47,11 +47,11 @@ public class MeasurementController {
     }
 
     @GetMapping("/daily")
-    public ResponseEntityWrapper<Measurement> getMeasurementsByMetricIdAndDepartmentId(@RequestParam(name = "page", defaultValue = "0") Integer page,
-                                                                                       @RequestParam(name = "size", defaultValue = "10") Integer size,
-                                                                                       @RequestParam(name = "metricId", required = false) Long metricId,
-                                                                                       @RequestParam(name = "departmentId", required = false) Long departmentId) {
-        return measurementService.getDailyMeasurements(PageRequest.of(page, size), metricId, departmentId);
+    public ResponseEntityWrapper<Measurement> getDailyMeasurementsByMetricAndDepartment(@RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                                                        @RequestParam(name = "size", defaultValue = "10") Integer size,
+                                                                                        @RequestParam(name = "metricId", required = false) Long metricId,
+                                                                                        @RequestParam(name = "departmentId", required = false) Long departmentId) {
+        return measurementService.getDailyMeasurementsByMetricAndDepartment(PageRequest.of(page, size), metricId, departmentId);
     }
 
     @GetMapping("/aggregated/daily")

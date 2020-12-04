@@ -72,9 +72,9 @@ public class MeasurementServiceImpl implements MeasurementService {
     }
 
     @Override
-    public ResponseEntityWrapper<Measurement> getDailyMeasurements(Pageable pageable,
-                                                                   Long metricId,
-                                                                   Long departmentId) {
+    public ResponseEntityWrapper<Measurement> getDailyMeasurementsByMetricAndDepartment(Pageable pageable,
+                                                                                        Long metricId,
+                                                                                        Long departmentId) {
         Metric fetchedMetric = metricRepository.findById(metricId)
                 .orElseThrow(() -> new ResourceNotFoundException("No records found"));
 
