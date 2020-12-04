@@ -6,6 +6,8 @@ import com.stathis.workplacemetricsapi.model.MeasurementDTO;
 import com.stathis.workplacemetricsapi.model.ResponseEntityWrapper;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+
 public interface MeasurementService {
 
     ResponseEntityWrapper<Measurement> getAllMeasurements(Pageable pageable);
@@ -18,7 +20,7 @@ public interface MeasurementService {
                                                             Long metricId,
                                                             Long departmentId);
 
-    AggregatedResult getDailyAggregatedResults(Long metricId, Long departmentId, Integer numberOfDaysBack);
+    AggregatedResult getDailyAggregatedResults(Long metricId, Long departmentId, LocalDate requestedDate);
 
-    AggregatedResult getWeeklyAggregatedResults(Long metricId, Long departmentId, Integer numberOfWeeksBack);
+    AggregatedResult getWeeklyAggregatedResults(Long metricId, Long departmentId, LocalDate requestedDate);
 }

@@ -7,6 +7,7 @@ import com.stathis.workplacemetricsapi.model.ResponseEntityWrapper;
 import com.stathis.workplacemetricsapi.services.MeasurementService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping(MeasurementController.BASE_URL)
@@ -54,14 +57,16 @@ public class MeasurementController {
     @GetMapping("/aggregated/daily")
     public AggregatedResult getDailyAggregatedResults(@RequestParam Long metricId,
                                                       @RequestParam Long departmentId,
-                                                      @RequestParam Integer numberOfDaysBack) {
-        return measurementService.getDailyAggregatedResults(metricId, departmentId, numberOfDaysBack);
+                                                      @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate requestedDate) {
+        return measurementService.getDailyAggregatedResults(metricId, departmentId, requestedDate);
     }
 
     @GetMapping("/aggregated/weekly")
     public AggregatedResult getWeeklyAggregatedResults(@RequestParam Long metricId,
                                                        @RequestParam Long departmentId,
-                                                       @RequestParam Integer numberOfWeeksBack) {
-        return measurementService.getWeeklyAggregatedResults(metricId, departmentId, numberOfWeeksBack);
+                                                       @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate requestedDate) {
+        return measurementService.getWeeklyAggregatedResults(metricId, departmentId, requestedDate);
     }
+
+    //TODO name in each @RequestParams
 }

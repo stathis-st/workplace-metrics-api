@@ -15,7 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.WeekFields;
@@ -93,16 +95,18 @@ public class MeasurementServiceImpl implements MeasurementService {
     }
 
     @Override
-    public AggregatedResult getDailyAggregatedResults(Long metricId, Long departmentId, Integer numberOfDaysBack) {
-        ZonedDateTime startOfDay = ZonedDateTime.now().minusDays(numberOfDaysBack).with(LocalTime.MIN);
-        ZonedDateTime endOfDay = ZonedDateTime.now().minusDays(numberOfDaysBack).with(LocalTime.MAX);
+    public AggregatedResult getDailyAggregatedResults(Long metricId, Long departmentId, LocalDate requestedDate) {
+
+        ZonedDateTime startOfDay = ZonedDateTime.of(requestedDate.atTime(LocalTime.MIN), ZoneId.systemDefault());
+        ZonedDateTime endOfDay = startOfDay.with(LocalTime.MAX);
 
         return measurementRepository.getAggregatedResults(metricId, departmentId, startOfDay, endOfDay);
     }
 
     @Override
-    public AggregatedResult getWeeklyAggregatedResults(Long metricId, Long departmentId, Integer numberOfWeeksBack) {
-        ZonedDateTime startOfWeek = ZonedDateTime.now().minusWeeks(3).with(WeekFields.ISO.getFirstDayOfWeek()).with(LocalTime.MIN);
+    public AggregatedResult getWeeklyAggregatedResults(Long metricId, Long departmentId, LocalDate requestedDate) {
+
+        ZonedDateTime startOfWeek = ZonedDateTime.of(requestedDate.with(WeekFields.ISO.getFirstDayOfWeek()).atTime(LocalTime.MIN), ZoneId.systemDefault());
         ZonedDateTime endOfWeek = startOfWeek.plusDays(6).with(LocalTime.MAX);
 
         return measurementRepository.getAggregatedResults(metricId, departmentId, startOfWeek, endOfWeek);
