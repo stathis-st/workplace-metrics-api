@@ -24,6 +24,9 @@ import java.util.Set;
 @Table(name = "metrics")
 public class Metric extends UpdateBaseEntity {
 
+    public static final String TEMPERATURE = "Temperature";
+    public static final String CELSIUS = "Celsius";
+
     @Column(name = "type", unique = true, nullable = false)
     private String type;
 
