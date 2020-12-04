@@ -1,6 +1,7 @@
 package com.stathis.workplacemetricsapi.controllers;
 
 import com.stathis.workplacemetricsapi.domain.Measurement;
+import com.stathis.workplacemetricsapi.model.AggregatedResult;
 import com.stathis.workplacemetricsapi.model.MeasurementDTO;
 import com.stathis.workplacemetricsapi.model.ResponseEntityWrapper;
 import com.stathis.workplacemetricsapi.services.MeasurementService;
@@ -48,5 +49,19 @@ public class MeasurementController {
                                                                                        @RequestParam(required = false) Long metricId,
                                                                                        @RequestParam(required = false) Long departmentId) {
         return measurementService.getDailyMeasurements(PageRequest.of(page, size), metricId, departmentId);
+    }
+
+    @GetMapping("/aggregated/daily")
+    public AggregatedResult getDailyAggregatedResults(@RequestParam Long metricId,
+                                                      @RequestParam Long departmentId,
+                                                      @RequestParam Integer numberOfDaysBack) {
+        return measurementService.getDailyAggregatedResults(metricId, departmentId, numberOfDaysBack);
+    }
+
+    @GetMapping("/aggregated/weekly")
+    public AggregatedResult getWeeklyAggregatedResults(@RequestParam Long metricId,
+                                                       @RequestParam Long departmentId,
+                                                       @RequestParam Integer numberOfWeeksBack) {
+        return measurementService.getWeeklyAggregatedResults(metricId, departmentId, numberOfWeeksBack);
     }
 }
