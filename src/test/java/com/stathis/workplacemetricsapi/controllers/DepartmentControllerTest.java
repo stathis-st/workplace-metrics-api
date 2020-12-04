@@ -136,7 +136,7 @@ class DepartmentControllerTest extends AbstractRestControllerTest {
     void updateDepartment() throws Exception {
 
         Department updatedDepartment = Department.builder().build();
-        updatedDepartment.setId(1L);
+        updatedDepartment.setId(ID_ONE);
         updatedDepartment.setName("alpha_department");
 
         when(departmentService.updateDepartment(anyLong(), any(Department.class))).thenReturn(updatedDepartment);
