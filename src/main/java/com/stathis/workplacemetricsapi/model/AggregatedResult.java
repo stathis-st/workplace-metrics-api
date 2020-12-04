@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AggregatedResults {
+public class AggregatedResult {
 
-    private Long averageValue;
-    private Long minValue;
-    private Long maxValue;
+    private Double averageValue;
+    private Double minValue;
+    private Double maxValue;
 }
