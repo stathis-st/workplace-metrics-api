@@ -97,7 +97,7 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void getDepartmentByIdNotFound() {
+    void getDepartmentByIdResourceNotFound() {
 
         when(departmentRepository.findById(anyLong())).thenReturn(Optional.empty());
 
