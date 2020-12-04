@@ -108,7 +108,7 @@ class MetricServiceImplTest {
     }
 
     @Test
-    void getMetricByIdNotFound() {
+    void getMetricByIdResourceNotFound() {
 
         when(metricRepository.findById(anyLong())).thenReturn(Optional.empty());
 
