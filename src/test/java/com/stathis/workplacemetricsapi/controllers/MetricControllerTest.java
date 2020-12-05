@@ -53,6 +53,7 @@ class MetricControllerTest extends AbstractRestControllerTest {
 
     Metric metricTemperature;
     Metric metricForUpdate;
+    Metric metricForSave;
 
     @BeforeEach
     void setUp() {
@@ -70,6 +71,10 @@ class MetricControllerTest extends AbstractRestControllerTest {
         metricForUpdate = Metric.builder().build();
         metricForUpdate.setType(TEMPERATURE);
         metricForUpdate.setMeasurementUnit(CELSIUS);
+
+        metricForSave = Metric.builder().build();
+        metricForSave.setType(TEMPERATURE);
+        metricForSave.setMeasurementUnit(CELSIUS);
     }
 
     @Test
@@ -137,11 +142,11 @@ class MetricControllerTest extends AbstractRestControllerTest {
 
         mockMvc.perform(post(MetricController.BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(metricTemperature)))
+                .content(asJsonString(metricForSave)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", equalTo(1)))
-                .andExpect(jsonPath("$.type", equalTo(TEMPERATURE)))
-                .andExpect(jsonPath("$.measurementUnit", equalTo(CELSIUS)));
+                .andExpect(jsonPath("$.type", equalTo(metricForSave.getType())))
+                .andExpect(jsonPath("$.measurementUnit", equalTo(metricForSave.getMeasurementUnit())));
     }
 
     @Test
@@ -152,7 +157,7 @@ class MetricControllerTest extends AbstractRestControllerTest {
 
         mockMvc.perform(post(MetricController.BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(metricTemperature)))
+                .content(asJsonString(metricForSave)))
                 .andExpect(status().isBadRequest());
     }
 
