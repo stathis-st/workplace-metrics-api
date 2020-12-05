@@ -24,6 +24,8 @@ import java.time.ZonedDateTime;
         indexes = @Index(columnList = "measurement_timestamp, metric_id, department_id"))
 public class Measurement extends CreationBaseEntity {
 
+    public static final Double VALUE_20 = 20.0;
+
     @Column(name = "value", nullable = false)
     private Double value;
 
