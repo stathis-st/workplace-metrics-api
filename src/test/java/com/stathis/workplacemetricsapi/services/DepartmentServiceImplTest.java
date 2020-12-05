@@ -112,7 +112,7 @@ class DepartmentServiceImplTest {
     @Test
     void saveDepartment() {
 
-        when(departmentRepository.save(any(Department.class))).thenReturn(departmentForSave);
+        when(departmentRepository.save(any(Department.class))).thenReturn(departmentAlpha);
 
         Department savedDepartment = departmentService.saveDepartment(departmentForSave);
 

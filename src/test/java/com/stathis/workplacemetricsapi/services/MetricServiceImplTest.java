@@ -123,7 +123,7 @@ class MetricServiceImplTest {
     @Test
     void saveMetric() {
 
-        when(metricRepository.save(any(Metric.class))).thenReturn(metricForSave);
+        when(metricRepository.save(any(Metric.class))).thenReturn(metricTemperature);
 
         Metric savedMetric = metricService.saveMetric(metricForSave);
 
