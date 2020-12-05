@@ -29,6 +29,10 @@ import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundExceptio
 public class MeasurementServiceImpl implements MeasurementService {
 
     public static final String FAILED_TO_SAVE_MEASUREMENT_RECORD = "Failed to save measurement record: ";
+    public static final String DEPARTMENT_NOT_FOUND_WITH_ID = "Department not found with id = ";
+    public static final String METRIC_NOT_FOUND_WITH_ID = "Metric not found with id = ";
+    public static final String NO_MEASUREMENT_RECORDS_FOUND = "No measurement records found";
+
     private final MeasurementRepository measurementRepository;
 
     private final DepartmentRepository departmentRepository;
@@ -53,12 +57,12 @@ public class MeasurementServiceImpl implements MeasurementService {
     public Measurement saveMeasurement(MeasurementDTO measurementDTO) {
         Department fetchedDepartment = departmentRepository.findById(measurementDTO.getDepartmentId())
                 .orElseThrow(() -> new ResourceNotFoundException(FAILED_TO_SAVE_MEASUREMENT_RECORD +
-                        "Department not found with id = " +
+                        DEPARTMENT_NOT_FOUND_WITH_ID +
                         measurementDTO.getDepartmentId()));
 
         Metric fetchedMetric = metricRepository.findById(measurementDTO.getMetricId())
                 .orElseThrow(() -> new ResourceNotFoundException(FAILED_TO_SAVE_MEASUREMENT_RECORD +
-                        "Metric not found with id = " +
+                        METRIC_NOT_FOUND_WITH_ID +
                         measurementDTO.getMetricId()));
 
         Measurement measurement = Measurement.builder()
@@ -76,10 +80,10 @@ public class MeasurementServiceImpl implements MeasurementService {
                                                                                         Long metricId,
                                                                                         Long departmentId) {
         Metric fetchedMetric = metricRepository.findById(metricId)
-                .orElseThrow(() -> new ResourceNotFoundException("No records found"));
+                .orElseThrow(() -> new ResourceNotFoundException(NO_MEASUREMENT_RECORDS_FOUND));
 
         Department fetchedDepartment = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new ResourceNotFoundException("No records found"));
+                .orElseThrow(() -> new ResourceNotFoundException(NO_MEASUREMENT_RECORDS_FOUND));
 
         Page<Measurement> measurementPage =
                 measurementRepository.findMeasurementsByMetricAndDepartmentAndMeasurementTimestampBetween(pageable,
