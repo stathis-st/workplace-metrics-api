@@ -4,11 +4,11 @@ import com.stathis.workplacemetricsapi.domain.Department;
 import com.stathis.workplacemetricsapi.domain.Measurement;
 import com.stathis.workplacemetricsapi.domain.Metric;
 import com.stathis.workplacemetricsapi.exception.ResourceNotFoundException;
+import com.stathis.workplacemetricsapi.model.AggregatedResult;
 import com.stathis.workplacemetricsapi.model.MeasurementDTO;
 import com.stathis.workplacemetricsapi.model.ResponseEntityWrapper;
 import com.stathis.workplacemetricsapi.services.MeasurementService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -33,6 +33,8 @@ import static com.stathis.workplacemetricsapi.domain.Metric.TEMPERATURE;
 import static com.stathis.workplacemetricsapi.exception.ResourceNotFoundException.RESOURCE_NOT_FOUND_WITH_ID;
 import static com.stathis.workplacemetricsapi.services.MeasurementServiceImpl.DEPARTMENT_NOT_FOUND_WITH_ID;
 import static com.stathis.workplacemetricsapi.services.MeasurementServiceImpl.FAILED_TO_SAVE_MEASUREMENT_RECORD;
+import static com.stathis.workplacemetricsapi.services.MeasurementServiceImpl.METRIC_NOT_FOUND_WITH_ID;
+import static com.stathis.workplacemetricsapi.services.MeasurementServiceImpl.NO_MEASUREMENT_RECORDS_FOUND;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
@@ -162,7 +164,6 @@ class MeasurementControllerTest extends AbstractRestControllerTest {
     }
 
     @Test
-    @Disabled
     void saveMeasurement() throws Exception {
 
         when(measurementService.saveMeasurement(any(MeasurementDTO.class))).thenReturn(measurementAlphaTemperature);
@@ -182,28 +183,123 @@ class MeasurementControllerTest extends AbstractRestControllerTest {
     }
 
     @Test
-    @Disabled
     void saveMeasurementDepartmentNotFound() throws Exception {
 
         when(measurementService.saveMeasurement(any(MeasurementDTO.class)))
                 .thenThrow(new ResourceNotFoundException(FAILED_TO_SAVE_MEASUREMENT_RECORD + DEPARTMENT_NOT_FOUND_WITH_ID + 1));
 
-        mockMvc.perform(post(MetricController.BASE_URL)
+        mockMvc.perform(post(MeasurementController.BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(measurementDTOForSave)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void getDailyMeasurementsByMetricAndDepartment() {
+    void saveMeasurementDepartmentNotFoundMetric() throws Exception {
+
+        when(measurementService.saveMeasurement(any(MeasurementDTO.class)))
+                .thenThrow(new ResourceNotFoundException(FAILED_TO_SAVE_MEASUREMENT_RECORD + METRIC_NOT_FOUND_WITH_ID + 1));
+
+        mockMvc.perform(post(MeasurementController.BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(measurementDTOForSave)))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void getDailyAggregatedResults() {
+    void getDailyMeasurementsByMetricAndDepartment() throws Exception {
+        int minutesToAdd = 10;
+        double measurementValue = 30.5;
+        int requestedPage = 1;
+        int requestedSize = 7;
+        int totalItems = 62;
+        int totalPages = 9;
+
+        List<Measurement> measurementList = populateMeasurementList(requestedSize, minutesToAdd, measurementValue);
+
+        ResponseEntityWrapper<Measurement> measurementResponseEntityWrapper =
+                new ResponseEntityWrapper<>(measurementList, requestedPage, (long) totalItems, totalPages);
+
+        when(measurementService.getDailyMeasurementsByMetricAndDepartment(any(Pageable.class), anyLong(), anyLong()))
+                .thenReturn(measurementResponseEntityWrapper);
+
+        mockMvc.perform(get(MeasurementController.BASE_URL + "/daily")
+                .param("page", "1")
+                .param("size", "7")
+                .param("metricId", "1")
+                .param("departmentId", "1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.entityList", hasSize(requestedSize)))
+                .andExpect(jsonPath("$.currentPage", equalTo(requestedPage)))
+                .andExpect(jsonPath("$.totalItems", equalTo(totalItems)))
+                .andExpect(jsonPath("$.totalPages", equalTo(totalPages)))
+                .andExpect(jsonPath("$.entityList[1].value", equalTo(measurementList.get(1).getValue())))
+                .andExpect(jsonPath("$.entityList[1].metric.id", equalTo(1)))
+                .andExpect(jsonPath("$.entityList[1].metric.type", equalTo(measurementList.get(1).getMetric().getType())))
+                .andExpect(jsonPath("$.entityList[1].metric.measurementUnit", equalTo(measurementList.get(1).getMetric().getMeasurementUnit())))
+                .andExpect(jsonPath("$.entityList[1].department.id", equalTo(1)))
+                .andExpect(jsonPath("$.entityList[1].department.name", equalTo(measurementList.get(1).getDepartment().getName())));
     }
 
     @Test
-    void getWeeklyAggregatedResults() {
+    void getDailyMeasurementsByMetricAndDepartmentNotFound() throws Exception {
+
+        when(measurementService.getDailyMeasurementsByMetricAndDepartment(any(Pageable.class), anyLong(), anyLong()))
+                .thenThrow(new ResourceNotFoundException(NO_MEASUREMENT_RECORDS_FOUND));
+
+        mockMvc.perform(get(MeasurementController.BASE_URL + "/daily")
+                .param("page", "1")
+                .param("size", "7")
+                .param("metricId", "1")
+                .param("departmentId", "1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(measurementDTOForSave)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getDailyAggregatedResults() throws Exception {
+
+        AggregatedResult dailyAggregatedResult = AggregatedResult.builder()
+                .averageValue(23.55)
+                .minValue(17.4)
+                .maxValue(25.1)
+                .build();
+
+        when(measurementService.getDailyAggregatedResults(anyLong(), anyLong(), any(LocalDate.class))).thenReturn(dailyAggregatedResult);
+
+        mockMvc.perform(get(MeasurementController.BASE_URL + "/aggregated/daily")
+                .param("metricId", "1")
+                .param("departmentId", "1")
+                .param("date", "2020-12-02")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.averageValue", equalTo(dailyAggregatedResult.getAverageValue())))
+                .andExpect(jsonPath("$.minValue", equalTo(dailyAggregatedResult.getMinValue())))
+                .andExpect(jsonPath("$.maxValue", equalTo(dailyAggregatedResult.getMaxValue())));
+    }
+
+    @Test
+    void getWeeklyAggregatedResults() throws Exception {
+
+        AggregatedResult weeklyAggregatedResult = AggregatedResult.builder()
+                .averageValue(22.15)
+                .minValue(16.9)
+                .maxValue(26.7)
+                .build();
+
+        when(measurementService.getWeeklyAggregatedResults(anyLong(), anyLong(), any(LocalDate.class))).thenReturn(weeklyAggregatedResult);
+
+        mockMvc.perform(get(MeasurementController.BASE_URL + "/aggregated/weekly")
+                .param("metricId", "1")
+                .param("departmentId", "1")
+                .param("date", "2020-12-02")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.averageValue", equalTo(weeklyAggregatedResult.getAverageValue())))
+                .andExpect(jsonPath("$.minValue", equalTo(weeklyAggregatedResult.getMinValue())))
+                .andExpect(jsonPath("$.maxValue", equalTo(weeklyAggregatedResult.getMaxValue())));
     }
 
     private List<Measurement> populateMeasurementList(int requestedSize, int minutesToAdd, double measurementValue) {
