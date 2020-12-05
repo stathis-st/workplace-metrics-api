@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "measurements")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -34,6 +34,6 @@ public class Metric extends UpdateBaseEntity {
     private String measurementUnit;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "metric")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "metric")
     private Set<Measurement> measurements = new HashSet<>();
 }
